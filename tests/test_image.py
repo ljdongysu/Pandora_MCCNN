@@ -6,16 +6,18 @@ from mc_cnn.run import run_mc_cnn_fast, run_mc_cnn_accurate
 from pandora import disparity
 import xarray as xr
 import numpy as np
+import cv2
 
 if __name__ == '__main__':
 
     # Read images (only grayscale images are accepted )
-    left_image = rasterio.open('/work/data/i18R/REMAP/TRAIN/EVT/depth_data2_2023_03_06/depth_data2_1loukongdi/img'
-                               '/left/1001677897568288285.png').read(1)
-    right_image = rasterio.open('/work/data/i18R/REMAP/TRAIN/EVT/depth_data2_2023_03_06/depth_data2_1loukongdi/img'
-                                '/right/1001677897568288285.png').read(1)
+    left_image_origin = rasterio.open('/work/data/i18R/REMAP/TRAIN/EVT/depth_data2_2023_03_06/depth_data2_1loukongdi/img/left/1001677897568288285.png').read(1)
+    right_image_origin = rasterio.open('/work/data/i18R/REMAP/TRAIN/EVT/depth_data2_2023_03_06/depth_data2_1loukongdi/img/right/1001677897568288285.png').read(1)
+
+    left_image = np.array(left_image_origin, dtype=np.float64)
+    right_image = np.array(right_image_origin, dtype=np.float64)
     disparity_min = 0
-    disparity_max = 4
+    disparity_max = 600
     print("left_image.shape: ", left_image.shape)
     # Path to the pretrained network
     mccnn_fast_model_path = str(get_weights(arch="fast", training_dataset="middlebury")) # Or custom weights filepath
@@ -47,5 +49,8 @@ if __name__ == '__main__':
     print("===========cv: ", cv)
     result = disparity_.to_disp(cv, left_image, right_image)
     print("result: ", result)
+    image_disp = result["disparity_map"].data
+
+    cv2.imwrite("ttt.png", image_disp)
 
     print("end!")
