@@ -26,6 +26,8 @@ Pytorch implementation of [[MCCNN]](#1.) neural network which computes a similar
 
 ```bash
 pip install MCCNN
+pip install pandora_plugin_mccnn
+pip install pandora
 ```
 
 ## Developer install
